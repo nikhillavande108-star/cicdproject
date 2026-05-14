@@ -1,66 +1,37 @@
 steps:
+  # Step 1: Install dependencies in a virtual environment
+  - name: 'python:3.9'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        python -m venv venv && \
+        . venv/bin/activate && \
+        pip install --upgrade pip && \
+        pip install -r app/requirements.txt
 
-# Step 1: Install dependencies in a virtual environment
+  # Step 2: Run tests in the same environment
+  - name: 'python:3.9'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        . venv/bin/activate && \
+        python -m unittest discover tests
 
-- name: 'python:3.9'
-
-entrypoint: 'sh'
-
-args:
-
-- '-c'
-
-- |
-
-python -m venv venv && \
-
-. venv/bin/activate && \
-
-pip install --upgrade pip && \
-
-pip install -r requirements.txt
-
-
-# Step 2: Run tests in the same environment
-
-- name: 'python:3.9'
-
-entrypoint: 'sh'
-
-args:
-
-- '-c'
-
-- |
-
-. venv/bin/activate && \
-
-python -m unittest discover tests
-
-
-# Step 3: Build Docker image
-
-- name: 'gcr.io/cloud-builders/docker'
-
-args:
-
-- 'build'
-
-- '-t'
-
-- 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo/myapp:$BUILD_ID'
-
-- '.'
-
-
-# Step 4: Push Docker image to Artifact Registry
-
-- name: 'gcr.io/cloud-builders/docker'
-
-args:
-
-- 'push'
-
-- 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo/myapp:$BUILD_ID'
-
+  # Step 3: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'build'
+      - '-t'
+      - 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo/myapp:$BUILD_ID'
+      - '.'
+  # Step 4: Push Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: 
+      - 'push'
+      - 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo:$BUILD_ID'
+      
+images:
+  - 'us-east1-docker.pkg.dev/openwriteup/cicd/myapp:$BUILD_ID'
 logsBucket: "gs://terraformgcpow23nik1"
