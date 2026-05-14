@@ -30,8 +30,8 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: 
       - 'push'
-      - 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo:$BUILD_ID'
+      - 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo/myapp:$BUILD_ID'
       
 images:
-  - 'us-east1-docker.pkg.dev/openwriteup/cicd/myapp:$BUILD_ID'
+  - 'us-east1-docker.pkg.dev/my-project-2-496004/nik-repo/myapp:$BUILD_ID'
 logsBucket: "gs://terraformgcpow23nik1"
